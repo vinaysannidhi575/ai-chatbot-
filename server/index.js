@@ -4,7 +4,7 @@ import "dotenv/config"; // loads GEMINI_API_KEY from .env
 import { GoogleGenAI } from "@google/genai";
 
 const app = express();
-app.use(cors()); // lets the React app (port 5173) call this server (port 3001)
+app.use(cors()); // lets the React app call this server
 app.use(express.json()); // lets us read JSON sent from the frontend
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -26,6 +26,7 @@ app.post("/api/chat", async (req, res) => {
     const interaction = await ai.interactions.create({
       model: "gemini-3.8-flash",
       input: message,
+      generation_config: { thinking_level: "low" }, // faster replies
       // previousId lets Gemini remember the earlier chat
       ...(previousId && { previous_interaction_id: previousId }),
     });
